@@ -130,3 +130,7 @@ dmypy.json
 
 *.kate-swp
 *.vscode*
+
+*.user
+
+*build-*
