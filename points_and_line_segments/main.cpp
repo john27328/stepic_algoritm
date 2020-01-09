@@ -5,7 +5,7 @@
 using Int = int;
 using Mas = std::vector<Int>;
 
-Int partition(Mas &m, Int l, Int r){
+void partition(Mas &m, Int l, Int r, Int &jl, Int &jr){
 
     //    for(auto &i: m)
     //        std::cout << i << " ";
@@ -13,28 +13,35 @@ Int partition(Mas &m, Int l, Int r){
 
     //     std::cout <<"--" << l << " - " << r << std::endl;
 
-    Int p = (r + l) / 2;
-    std::swap(m[p], m[r-1]);
-    p = r-1;
-    Int j = l;
-    for (Int i = l; i < p; i++){
-        if(m[i] <= m[p]){
-            std::swap(m[i], m[j]);
-            j++;
+    {
+        Int p = (r + l) / 2;
+        std::swap(m[p], m[l]);
+    }
+    Int pv = m[l];
+    jl = l;
+    jr = l;
+    for (Int i = l+1; i < r; i++){
+        if(m[i] < pv){
+            std::swap(m[i], m[jr+1]);
+            std::swap(m[jr+1], m[jl]);
+            jl++;
+            jr++;
+        } else if (m[i] == pv) {
+            std::swap(m[jr+1], m[i]);
+            jr++;
         }
     }
-    std::swap(m[p], m[j]);
 
     //    std::cout <<"---" << j << std::endl;
-    return j;
 }
 
 void qSort(Mas &m, Int l, Int r){
     if (r - l < 1)
         return;
-    Int j = partition(m, l, r);
-    qSort(m,l,j-1);
-    qSort(m,j+1,r);
+    Int jl, jr;
+    partition(m, l, r, jl, jr);
+    qSort(m,l,jl);
+    qSort(m,jr+1,r);
 }
 
 int get_pos(const Mas &numbers, Int number) {
@@ -73,7 +80,7 @@ int main()
     qSort(begins, 0, n);
     qSort(ends, 0, n);
 
-    for (int &p: points){
+    for (auto &p: points){
         auto l = get_pos(begins, p);
         while (begins[l] == p and l < n) l++;
         auto r = get_pos(ends, p);
@@ -82,7 +89,7 @@ int main()
     }
     std::cout << std::endl;
 
-//    Mas m = {4,2,1,6,2,3,2,5};
+//    Mas m = {0, 1, 2, 3 ,4 ,5};
 //    qSort(m, 0, m.size());
 
 //    for(auto &i: m)
